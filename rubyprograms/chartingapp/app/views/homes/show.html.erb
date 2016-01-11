@@ -1,0 +1,86 @@
+<!-- don't forget to use scope! -->
+
+<div class="row">
+
+  <div class="col-xs-6">
+    <h3>Revenue by Product</h3>
+   <%= column_chart [["Banana", Product.where(name: "Banana").map {|p| p.revenue}.reduce(:+).round(2)], ["Apple", Product.where(name: "Apple").map {|p| p.revenue}.reduce(:+).round(2)]] %>
+  </div>
+    <div class="col-xs-6">
+    <h3>Revenue by Product Over Time</h3>
+  <% banana_dates = Product.where(name: "Banana").group_by_day(:date).count.map {|key, value| key} %>
+  <% banana_revenue = Product.where(name: "Banana").map {|b| b.revenue} %>
+  <% banana_data = Hash[*banana_dates.zip(banana_revenue).flatten] %>
+
+  <% apple_dates = Product.where(name: "Apple").group_by_day(:date).count.map {|key, value| key} %>
+  <% apple_revenue = Product.where(name: "Apple").map {|a| a.revenue} %>
+  <% apple_data = Hash[*apple_dates.zip(apple_revenue).flatten] %>
+
+   <%= line_chart [
+  {name: "Bananas", data: banana_data },
+  {name: "Apple", data: apple_data }
+    ] %>
+
+      <div class="col-xs-6">
+    <h3>Total Units of Items Sold</h3>
+    </div>
+
+    <div class="col-xs-6">
+    <h3>Total Stock Level by Day</h3>
+    
+  </div>
+
+    <!-- Line Chart - Single Series -->
+  <div class="col-xs-6">
+    <h3>Visits By Day</h3>
+    <%= line_chart @visits.group_by_day(:visited_at, format: "%B %d, %Y").count, discrete: true %>
+  </div>
+
+  <!-- Line Chart - Multiple Series -->
+  <div class="col-xs-6">
+    <h3>Visits By Country Per Day</h3>
+    <%= line_chart   Visit.pluck("country").uniq.map { |c| { name: c, data: @visits.where(country: c).group_by_day(:visited_at, format: "%B %d, %Y").count }  }, discrete: true %>
+    <%= line_chart   Visit.pluck("country").uniq.map { |c| { name: c, data: @visits.where(country:c).group_by_day(:visited_at, format: "%B %d").count } }, discrete: true %>
+   
+
+  </div>
+  
+</div>
+
+<div class="row">
+
+  <!-- Pie Chart -->
+  <div class="col-xs-6">
+    <h3>Total Visits by Country</h3>
+    <%= pie_chart @visits.group(:country).count %>
+  </div>
+
+  <!-- Geo Chart --> 
+  <div class="col-xs-6">
+    <h3>Visits By Day</h3>
+    <%= geo_chart @visits.group(:country).count %>
+  </div>
+
+</div>
+
+<!-- area chart --> 
+<div class="row">
+  <div class="col-xs-12">
+    <h3>Total Load Time By Day</h3>
+    <%= area_chart @visits.group_by_day(:visited_at).sum(:load_time) %>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Column Chart --> 
+  <div class="col-xs-6">
+    <h3>Total Visits Per Country</h3>
+    <%= column_chart @visits.group(:country).count %>
+  </div>
+  <!-- Bar Chart --> 
+  <div class="col-xs-6">
+    <h3>Total Visits Per Country</h3>
+    <%= bar_chart @visits.group(:country).count %>
+  </div>
+
+</div>
