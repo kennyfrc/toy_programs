@@ -1,0 +1,71 @@
+  <div class="col-xs-6">
+    <h3>Purchased Apple Stocks by Day</h3>
+    <%= line_chart Purchase.where(product: "0002").group_by_day(:created_at, format: "%B %d, %Y").sum(:units_purchased), discrete: true %>
+
+    <h3>Apple Sales by Day (volume)</h3>
+
+    <% sum_sold, sum_purch, sum_rev, sum_cost = 0, 0, 0, 0 %>
+
+    <%= line_chart Sale.where(product: "0002").group_by_day(:created_at, format: "%B %d, %Y").sum(:units_sold), discrete: true %>
+
+    <% apple_dates = Sale.where(product: "0002").group_by_day(:created_at, format: "%B %d, %Y").count.map {|key, value| key} %>
+    <% apple_revenue = Sale.where(product: "0002").map {|a| a.revenue} %>
+    <% apple_data = Hash[*apple_dates.zip(apple_revenue).flatten] %>
+    <% apple_cumu_rev_data = apple_data.map { |x,y| { x => (sum_rev += y) } }.reduce({}, :merge) # without merge it doesn't take out the array %> 
+
+    <% apple_dates2 = Purchase.where(product: "0002").group_by_day(:created_at, format: "%B %d, %Y").count.map {|key, value| key} %>
+    <% apple_cost = Purchase.where(product: "0002").map {|a| a.cost} %>
+    <% apple_cost_data = Hash[*apple_dates2.zip(apple_cost).flatten] %>
+    <% apple_cumu_cost_data = apple_cost_data.map { |x,y| { x => (sum_cost += y) } }.reduce({}, :merge) # without merge it doesn't take out the array %> 
+
+    <% apple_profit = apple_revenue.zip(apple_cost).map {|rev, cost| rev - cost } %>
+    <% apple_profit_data = Hash[*apple_dates2.zip(apple_profit).flatten] %>
+
+    <% apple_dates3 = Purchase.where(product: "0002").group_by_day(:created_at, format: "%B %d, %Y").count.map {|key, value| key} %> 
+    <% apples_purchased = Purchase.where(product: "0002").group_by_day(:created_at, format: "%B %d, %Y").sum(:units_purchased).map { |x,y| { x => (sum_purch += y) } }.reduce({}, :merge).values %>
+    <% apples_sold = Sale.where(product: "0002").group_by_day(:created_at, format: "%B %d, %Y").sum(:units_sold).map { |x,y| { x => (sum_sold += y) } }.reduce({}, :merge).values %>
+    <% apples_stock_level = apples_purchased.zip(apples_sold).map {|purch, sold| purch - sold } %>
+    <% apples_stock_level_data = Hash[*apple_dates3.zip(apples_stock_level).flatten] %>
+
+    <% apples_latest_stock_level = apples_stock_level_data.values.last %>
+    <% average_apple_sales = Sale.where(product: "0002").where(:created_at => (DateTime.now - 5.days)..(DateTime.now)).average(:units_sold).to_f %>
+    <% apples_days_on_hand = average_apple_sales / apples_latest_stock_level %>
+
+    <h3>Apples Days on Hand</h3>
+    <%= column_chart [
+      [@productdescriptions.find_by(product: "0002").name, apples_days_on_hand.round(0) ]
+    ] %>
+
+    <h3>Apple Stock Level Over Time</h3>
+    <%= line_chart [
+      {name: @productdescriptions.find_by(product: "0002").name, data: apples_stock_level_data }
+    ] %>
+
+    <h3>Apple Sales by Day (value)</h3>
+    <%= line_chart [
+      {name: @productdescriptions.find_by(product: "0002").name, data: apple_data }
+    ] %>
+
+    <h3>Apple Cumulative Sales (value)</h3>
+    <%= line_chart [
+      {name: @productdescriptions.find_by(product: "0002").name, data: apple_cumu_rev_data }
+    ] %>
+
+    <h3>Apple Costs by Day (value)</h3>
+    <%= line_chart [
+      {name: @productdescriptions.find_by(product: "0002").name, data: apple_cost_data }
+    ] %>
+
+    <h3>Apple Profit by Day</h3>
+    <%= line_chart [
+      {name: @productdescriptions.find_by(product: "0002").name, data: apple_profit_data }
+    ] %>
+
+    <h3>Stock Level by Day</h3>
+    <%= line_chart [
+      {name: @productdescriptions.find_by(product: "0002").name, data: apple_profit_data }
+    ] %>
+
+  </div>
+   
+ 
