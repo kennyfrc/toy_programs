@@ -31,6 +31,12 @@
     <% average_apple_sales = Sale.where(product: "0002").where(:created_at => (DateTime.now - 5.days)..(DateTime.now)).average(:units_sold).to_f %>
     <% apples_days_on_hand = average_apple_sales / apples_latest_stock_level %>
 
+    <h3>Apple Cumulative Sales (value)</h3>
+    <%= line_chart [
+      {name: @productdescriptions.find_by(product: "0002").name, data: apple_cumu_rev_data }
+    ] %>
+
+
     <h3>Apples Days on Hand</h3>
     <%= column_chart [
       [@productdescriptions.find_by(product: "0002").name, apples_days_on_hand.round(0) ]
@@ -44,11 +50,6 @@
     <h3>Apple Sales by Day (value)</h3>
     <%= line_chart [
       {name: @productdescriptions.find_by(product: "0002").name, data: apple_data }
-    ] %>
-
-    <h3>Apple Cumulative Sales (value)</h3>
-    <%= line_chart [
-      {name: @productdescriptions.find_by(product: "0002").name, data: apple_cumu_rev_data }
     ] %>
 
     <h3>Apple Costs by Day (value)</h3>
