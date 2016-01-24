@@ -1,0 +1,23 @@
+# == Schema Information
+#
+# Table name: standings
+#
+#  id         :integer          not null, primary key
+#  tour_id    :integer
+#  cyclist_id :integer
+#  rank       :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tour_id: 1
+  cyclist_id: 1
+  rank: 1
+
+two:
+  tour_id: 1
+  cyclist_id: 1
+  rank: 1
