@@ -1,6 +1,22 @@
 source 'https://rubygems.org'
 
+# Utilities for cleaning up UTF8 strings
+gem 'utf8_utils'
 
+# Install a form
+gem 'simple_form'
+
+# Create some authentication featuer
+gem 'devise'
+
+# validate the URL
+gem "validate_url"
+
+# scraping capability
+gem 'nokogiri'
+
+# Install bootstrap
+gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.5'
 # Use sqlite3 as the database for Active Record
