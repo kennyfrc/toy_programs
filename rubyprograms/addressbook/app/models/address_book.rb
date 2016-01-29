@@ -1,16 +1,15 @@
 class AddressBook < ActiveRecord::Base
   has_many :entries
 
-  def self.add_entry(name, phone, email)
+  def self.add_entry(row_hash)
     index = 0
-    entries = []
-    entries.each do |entry|
-      if name < entry.name
+    Entry.all.each do |entry|
+      if name < row_hash.name
         break
       end
       index += 1
     end
-    entries.insert(index, Entry.create!(name: name, phone_number: phone, email: email))
+    all.entries.insert(index, Entry.create!(name: name, phone_number: phone, email: email))
   end
 
   def self.import_from_csv(file_name)

@@ -9,8 +9,6 @@ class AddressBooksController < ApplicationController
       format.html
       format.csv {send_data Entry.to_csv} # render text renders it int he browser. send_data downloads it
     end
-
-
   end
 
   def import
